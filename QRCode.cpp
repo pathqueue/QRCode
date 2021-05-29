@@ -11,7 +11,7 @@ void main(int argc, char** argv) {
 	try {
 		InitializeMagick(*argv);
 		setlocale(LC_ALL, "Russian");
-		string _string = "Хабрррррррррррррррррррррррррррррррррррррррррррррррррррррррррррррррррррррррррррррррррррррррh";
+		string _string = "Хабр";
 		Bits* _bits = new Bits(_string);
 		system("pause");
 	}

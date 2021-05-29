@@ -20,7 +20,7 @@ private:
 	bitset<8> infoAmountVer1to9 = 0; // длина в 8 битовой записи
 	bitset<16> infoAmountVer10to40 = 0; // длина в 16 битовой записи
 	list<bitset<8>> stringBits; // список 8 битовых записей символов строки
-	const bitset<8> fillingBytes[2] = {11101100, 00010001}; //
+	const bitset<8> fillingBytes[2] = { bitset<8>(236), bitset<8>(17)}; //
 	list<bitset<8>> filledBits;
 
 	void SetVersion(); // установить версию

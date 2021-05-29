@@ -48,68 +48,71 @@ void Bits::Filling() {
 	int generalLength = this->ServiseInfo();
 	int additionalNulls = 8 - (generalLength % 8);
 	bitset<8> temp, tempList;
-	for (int i = 0; i < 4; i++) {
-		temp[i] = this->codingType[i];
+	for (int i = 7; i > 3; i--) {
+		temp[i] = this->codingType[7 - i];
 	}
 	if (this->infoAmountVer10to40 == 0) {
-		for (int i = 0; i < 4; i++) {
-			temp[4 + i] = this->infoAmountVer1to9[i];
+		for (int i = 7; i > 3; i--) {
+			temp[i - 4] = this->infoAmountVer1to9[i];
 		}
-		cout << temp << endl;
+		cout << temp;
 		this->filledBits.push_back(temp);
 		this->filledByteLength++;
-		for (int i = 0; i < 4; i++) {
-			temp[i] = this->infoAmountVer1to9[4 + i];
+		for (int i = 7; i > 3; i--) {
+			temp[i] = this->infoAmountVer1to9[i - 4];
 		}
 	}
 	else {
-		for (int i = 0; i < 4; i++) {
-			temp[4 + i] = this->infoAmountVer10to40[i];
+		for (int i = 7; i > 3; i--) {
+			temp[i - 4] = this->infoAmountVer10to40[i];
 		}
-		cout << temp.to_string() << endl;
+		cout << temp;
 		this->filledBits.push_back(temp);
 		this->filledByteLength++;
-		for (int i = 0; i < 8; i++) {
-			temp[i] = this->infoAmountVer10to40[4 + i];
+		for (int i = 7; i > -1; i--) {
+			temp[i] = this->infoAmountVer10to40[i - 4];
 		}
-		cout << temp << endl;
+		cout << temp;
 		this->filledBits.push_back(temp);
 		this->filledByteLength++;
-		for (int i = 0; i < 4; i++) {
-			temp[i] = this->infoAmountVer10to40[12 + i];
+		for (int i = 7; i > 3; i--) {
+			temp[i] = this->infoAmountVer10to40[i - 12];
 		}
 	}
 	tempList = this->stringBits.front();
 	this->stringBits.pop_front();
 	for (int i = 0; i < this->byteLength; i++) {
-		for (int i = 0; i < 4; i++) {
-			temp[4 + i] = tempList[i];
+		for (int j = 7; j > 3; j--) {
+			temp[j - 4] = tempList[j];
 		}
-		cout << temp << endl;
+		cout << temp;
 		this->filledBits.push_back(temp);
 		this->filledByteLength++;
-		for (int i = 0; i < 4; i++) {
-			temp[i] = tempList[4 + i];
+		for (int j = 7; j > 3; j--) {
+			temp[j] = tempList[j - 4];
 		}
 		if (!this->stringBits.empty())
-		{ 
+		{
 			tempList = this->stringBits.front();
 			this->stringBits.pop_front();
 		}
 	}
-	for (int i = 8 - additionalNulls; i < 8; i++) {
+	for (int i = 3; i >= 0; i--) {
 		temp[i] = 0;
 	}
+	cout << temp << ' ';
 	this->filledBits.push_back(temp);
 	this->filledByteLength++;
-	if (this->filledByteLength < this->maxInfoAmount[this->version - 1]/8) {
+	if (this->filledByteLength < this->maxInfoAmount[this->version - 1] / 8) {
 		int n = this->maxInfoAmount[this->version - 1] / 8 - this->filledByteLength;
 		for (int i = 0; i < n; i++) {
 			if (i % 2 == 0) {
+				cout << temp << ' ';
 				this->filledBits.push_back(this->fillingBytes[0]);
 				this->filledByteLength++;
 			}
 			else {
+				cout << temp << ' ';
 				this->filledBits.push_back(this->fillingBytes[1]);
 				this->filledByteLength++;
 			}

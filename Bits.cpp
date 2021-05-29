@@ -107,12 +107,12 @@ void Bits::Filling() {
 		int n = this->maxInfoAmount[this->version - 1] / 8 - this->filledByteLength;
 		for (int i = 0; i < n; i++) {
 			if (i % 2 == 0) {
-				cout << temp << ' ';
+				cout << this->fillingBytes[0] << ' ';
 				this->filledBits.push_back(this->fillingBytes[0]);
 				this->filledByteLength++;
 			}
 			else {
-				cout << temp << ' ';
+				cout << this->fillingBytes[1] << ' ';
 				this->filledBits.push_back(this->fillingBytes[1]);
 				this->filledByteLength++;
 			}

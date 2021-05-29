@@ -31,10 +31,10 @@ void Bits::SetInfoAmount() {
 	}
 }
 
-void Bits::ServiseInfo() {
+int Bits::ServiseInfo() {
 	this->SetVersion();
 	this->SetInfoAmount();
-	unsigned int generalLength = this->codingType.to_string().length() + 8 * this->byteLength;
+	int generalLength = 4 + 8 * this->byteLength;
 	if (this->infoAmountVer10to40 == 0) generalLength += this->infoAmountVer1to9.to_string().length();
 	else  generalLength += this->infoAmountVer10to40.to_string().length();
 	if (generalLength > this->maxInfoAmount[this->version-1]) {
@@ -44,5 +44,70 @@ void Bits::ServiseInfo() {
 }
 
 void Bits::Filling() {
-	this->ServiseInfo();
+	int generalLength = this->ServiseInfo();
+	int additionalNulls = 8 - (generalLength % 8);
+	bitset<8> temp, tempList;
+	for (int i = 0; i < 4; i++) {
+		temp[i] = this->codingType[i];
+	}
+	if (this->infoAmountVer10to40 == 0) {
+		for (int i = 0; i < 4; i++) {
+			temp[4 + i] = this->infoAmountVer1to9[i];
+		}
+		this->filledBits.push_back(temp);
+		this->filledByteLength++;
+		for (int i = 0; i < 4; i++) {
+			temp[i] = this->infoAmountVer1to9[4 + i];
+		}
+	}
+	else {
+		for (int i = 0; i < 4; i++) {
+			temp[4 + i] = this->infoAmountVer10to40[i];
+		}
+		this->filledBits.push_back(temp);
+		this->filledByteLength++;
+		for (int i = 0; i < 8; i++) {
+			temp[i] = this->infoAmountVer10to40[4 + i];
+		}
+		this->filledBits.push_back(temp);
+		this->filledByteLength++;
+		for (int i = 0; i < 4; i++) {
+			temp[i] = this->infoAmountVer10to40[12 + i];
+		}
+	}
+	tempList = this->stringBits.front();
+	this->stringBits.pop_front();
+	for (int i = 0; i < this->byteLength; i++) {
+		for (int i = 0; i < 4; i++) {
+			temp[4 + i] = tempList[i];
+		}
+		this->filledBits.push_back(temp);
+		this->filledByteLength++;
+		for (int i = 0; i < 4; i++) {
+			temp[i] = tempList[4 + i];
+		}
+		if (!this->stringBits.empty())
+		{ 
+			tempList = this->stringBits.front();
+			this->stringBits.pop_front();
+		}
+	}
+	for (int i = 8 - additionalNulls; i < 8; i++) {
+		temp[i] = 0;
+	}
+	this->filledBits.push_back(temp);
+	this->filledByteLength++;
+	if (this->filledByteLength < this->maxInfoAmount[this->version - 1]/8) {
+		int n = this->maxInfoAmount[this->version - 1] / 8 - this->filledByteLength;
+		for (int i = 0; i < n; i++) {
+			if (i % 2 == 0) {
+				this->filledBits.push_back(this->fillingBits[0]);
+				this->filledByteLength++;
+			}
+			else {
+				this->filledBits.push_back(this->fillingBits[1]);
+				this->filledByteLength++;
+			}
+		}
+	}
 }

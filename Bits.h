@@ -15,14 +15,17 @@ private:
 		11640, 12328, 13048, 13800, 14496, 15312, 15936, 16816, 17728, 18672 }; // массив для определения версии
 	bitset<4> const codingType = 0100; // способ кодирования
 	unsigned int byteLength = 0; // длина в байтах
+	unsigned int filledByteLength = 0;
 	bitset<8> infoAmountVer1to9 = 0; // длина в 8 битовой записи
 	bitset<16> infoAmountVer10to40 = 0; // длина в 16 битовой записи
 	list<bitset<8>> stringBits; // список 8 битовых записей символов строки
+	list<bitset<8>> filledBits;
+	bitset<8> fillingBits[2] = {11101100, 00010001};
 	char* additionalZeros; // заполняющие нули
 
 	void SetVersion(); // установить версию
 	void SetInfoAmount(); // установить длину в 8 или 16 битовой записи
-	void ServiseInfo(); // формирование служебной информации
+	int ServiseInfo(); // формирование служебной информации
 	void Filling(); // заполнение
 public:
 	unsigned int version = 0;

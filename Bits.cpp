@@ -41,6 +41,7 @@ int Bits::ServiseInfo() {
 		this->version++;
 		this->SetInfoAmount();
 	}
+	return generalLength;
 }
 
 void Bits::Filling() {
@@ -54,6 +55,7 @@ void Bits::Filling() {
 		for (int i = 0; i < 4; i++) {
 			temp[4 + i] = this->infoAmountVer1to9[i];
 		}
+		cout << temp << endl;
 		this->filledBits.push_back(temp);
 		this->filledByteLength++;
 		for (int i = 0; i < 4; i++) {
@@ -64,11 +66,13 @@ void Bits::Filling() {
 		for (int i = 0; i < 4; i++) {
 			temp[4 + i] = this->infoAmountVer10to40[i];
 		}
+		cout << temp.to_string() << endl;
 		this->filledBits.push_back(temp);
 		this->filledByteLength++;
 		for (int i = 0; i < 8; i++) {
 			temp[i] = this->infoAmountVer10to40[4 + i];
 		}
+		cout << temp << endl;
 		this->filledBits.push_back(temp);
 		this->filledByteLength++;
 		for (int i = 0; i < 4; i++) {
@@ -81,6 +85,7 @@ void Bits::Filling() {
 		for (int i = 0; i < 4; i++) {
 			temp[4 + i] = tempList[i];
 		}
+		cout << temp << endl;
 		this->filledBits.push_back(temp);
 		this->filledByteLength++;
 		for (int i = 0; i < 4; i++) {
@@ -101,11 +106,11 @@ void Bits::Filling() {
 		int n = this->maxInfoAmount[this->version - 1] / 8 - this->filledByteLength;
 		for (int i = 0; i < n; i++) {
 			if (i % 2 == 0) {
-				this->filledBits.push_back(this->fillingBits[0]);
+				this->filledBits.push_back(this->fillingBytes[0]);
 				this->filledByteLength++;
 			}
 			else {
-				this->filledBits.push_back(this->fillingBits[1]);
+				this->filledBits.push_back(this->fillingBytes[1]);
 				this->filledByteLength++;
 			}
 		}

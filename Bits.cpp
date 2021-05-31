@@ -119,3 +119,28 @@ void Bits::Filling() {
 		}
 	}
 }
+
+void Bits::Division()
+{
+	int blocksCount = this->blocksCount[this->version - 1];
+	int blockSize = this->byteLength / blocksCount;
+	int blocksWithRemainder = this->byteLength % blocksCount;
+	list<bitset<8>> temp;
+	for (int i = 0; i < blocksCount - blocksWithRemainder; i++) {
+		for (int j = 0; j < blockSize; j++) {
+			temp.push_back(this->filledBits.front());
+			this->filledBits.pop_front();
+		}
+		this->infoBlocks.push_back(temp);
+		temp.clear();
+	}
+
+	for (int i = 0; i < blocksWithRemainder; i++) {
+		for (int j = 0; j < blockSize + 1; j++) {
+			temp.push_back(this->filledBits.front());
+			this->filledBits.pop_front();
+		}
+		this->infoBlocks.push_back(temp);
+		temp.clear();
+	}
+}

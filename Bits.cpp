@@ -144,3 +144,65 @@ void Bits::Division()
 		temp.clear();
 	}
 }
+
+void Bits::createCorrectionBytes() // создание байтов коррекции
+{
+	int A, B;
+	int correctionBytesCount = this->correctionBytesCount[this->version - 1];
+	list <int> correctionBytes = this->generatingPolynoms[correctionBytesCount];
+	list<list<bitset<8>>> ::iterator infoBlocksIterator = this->infoBlocks.begin();
+	list<bitset<8>> :: iterator blockIterator;
+	list <int> temp;
+	list<int> ::iterator tempIterator;
+	list <int> blockArray;
+	list<int> ::iterator blockArrayIterator;
+	list<bitset<8>> bitsetTemp;
+	while (infoBlocksIterator != this->infoBlocks.end()) {
+		temp = correctionBytes;
+		blockIterator = (*infoBlocksIterator).begin();
+		int blockArraySize = max((*infoBlocksIterator).size(), correctionBytes.size());
+		for (int i = 0; i < blockArraySize; i++) {
+			if (blockIterator == (*infoBlocksIterator).end())
+			{
+				blockArray.push_back(0);
+			}
+			else 
+			{
+				blockArray.push_back((*blockIterator).to_ulong());
+				blockIterator++;
+			}
+		}
+
+		for (int i = 0; i < (*infoBlocksIterator).size(); i++) {
+			A = blockArray.front();
+			blockArray.pop_front();
+			blockArray.push_back(0);
+			if (A == 0) continue;
+			B = reverseGalois[A];
+			tempIterator = temp.begin();
+			while (tempIterator != temp.end()) {
+				*tempIterator = (*tempIterator + B) % 255;
+				tempIterator++;
+			}
+			tempIterator = temp.begin();
+			while (tempIterator != temp.end()) {
+				*tempIterator = galois[*tempIterator];
+				tempIterator++;
+			}
+			tempIterator = temp.begin();
+			blockArrayIterator = blockArray.begin();
+			while (tempIterator != temp.end()) {
+				*tempIterator = *tempIterator ^ *blockArrayIterator;
+				tempIterator++;
+				blockArrayIterator++;
+			}
+		}
+		tempIterator = temp.begin();
+		while (tempIterator != temp.end()) {
+			bitsetTemp.push_back(*tempIterator);
+			tempIterator++;
+		}
+		this->correctionBytesBlock.push_back(bitsetTemp);
+		infoBlocksIterator++;
+	}
+}

@@ -18,8 +18,8 @@ private:
 	bitset<8> infoAmountVer1to9 = 0; // длина в 8 битовой записи
 	bitset<16> infoAmountVer10to40 = 0; // длина в 16 битовой записи
 	list<bitset<8>> stringBits; // список 8 битовых записей символов строки
-	const bitset<8> fillingBytes[2] = { bitset<8>(236), bitset<8>(17)}; //
-	list<bitset<8>> filledBits;
+	const bitset<8> fillingBytes[2] = { bitset<8>(236), bitset<8>(17)}; // заполн€ющийе байты
+	list<bitset<8>> filledBits; // новый список - служебна€ информаци€ + сообщение + заполн€ющие байты
 	list<list<bitset<8>>> infoBlocks; // блоки информации (список в списке)
 	list<list<bitset<8>>> correctionBytesBlock; // блоки байтов коррекции, соответвующие блокам информации
 	const int maxInfoAmount[40] = {

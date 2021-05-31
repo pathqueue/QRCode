@@ -150,12 +150,12 @@ void Bits::createCorrectionBytes() // создание байтов коррекции
 	int A, B;
 	int correctionBytesCount = this->correctionBytesCount[this->version - 1];
 	list <int> correctionBytes = this->generatingPolynoms[correctionBytesCount];
-	list<list<bitset<8>>> ::iterator infoBlocksIterator = this->infoBlocks.begin();
+	list<list<bitset<8>>> :: iterator infoBlocksIterator = this->infoBlocks.begin();
 	list<bitset<8>> :: iterator blockIterator;
-	list <int> temp;
-	list<int> ::iterator tempIterator;
-	list <int> blockArray;
-	list<int> ::iterator blockArrayIterator;
+	list<int> temp;
+	list<int> :: iterator tempIterator;
+	list<int> blockArray;
+	list<int> :: iterator blockArrayIterator;
 	list<bitset<8>> bitsetTemp;
 	while (infoBlocksIterator != this->infoBlocks.end()) {
 		temp = correctionBytes;
@@ -199,7 +199,7 @@ void Bits::createCorrectionBytes() // создание байтов коррекции
 		}
 		tempIterator = temp.begin();
 		while (tempIterator != temp.end()) {
-			bitsetTemp.push_back(*tempIterator);
+			bitsetTemp.push_back(bitset<8>(*tempIterator));
 			tempIterator++;
 		}
 		this->correctionBytesBlock.push_back(bitsetTemp);

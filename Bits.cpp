@@ -149,18 +149,18 @@ void Bits::createCorrectionBytes() // создание байтов коррекции
 {
 	int A, B;
 	int correctionBytesCount = this->correctionBytesCount[this->version - 1];
-	list <int> correctionBytes = this->generatingPolynoms[correctionBytesCount];
-	list<list<bitset<8>>> :: iterator infoBlocksIterator = this->infoBlocks.begin();
-	list<bitset<8>> :: iterator blockIterator;
+	list <int> generatingPolynoms = this->generatingPolynoms[correctionBytesCount];
+	list<list<bitset<8>>> ::iterator infoBlocksIterator = this->infoBlocks.begin();
+	list<bitset<8>> ::iterator blockIterator;
 	list<int> temp;
-	list<int> :: iterator tempIterator;
+	list<int> ::iterator tempIterator;
 	list<int> blockArray;
-	list<int> :: iterator blockArrayIterator;
+	list<int> ::iterator blockArrayIterator;
 	list<bitset<8>> bitsetTemp;
 	while (infoBlocksIterator != this->infoBlocks.end()) {
-		temp = correctionBytes;
+		temp = generatingPolynoms;
 		blockIterator = (*infoBlocksIterator).begin();
-		int blockArraySize = max((*infoBlocksIterator).size(), correctionBytes.size());
+		int blockArraySize = max((*infoBlocksIterator).size(), generatingPolynoms.size());
 		for (int i = 0; i < blockArraySize; i++) {
 			if (blockIterator == (*infoBlocksIterator).end())
 			{
@@ -202,7 +202,42 @@ void Bits::createCorrectionBytes() // создание байтов коррекции
 			bitsetTemp.push_back(bitset<8>(*tempIterator));
 			tempIterator++;
 		}
-		this->correctionBytesBlock.push_back(bitsetTemp);
+		this->correctionBytesBlocks.push_back(bitsetTemp);
 		infoBlocksIterator++;
+	}
+}
+
+void Bits::blockMerging()
+{
+	int blocksCount = this->blocksCount[this->version - 1];
+	int blockSize = this->byteLength / blocksCount;
+	int blocksWithRemainder = this->byteLength % blocksCount;
+	list<list<bitset<8>>> ::iterator infoBlocksIterator = this->infoBlocks.begin();
+	list<list<bitset<8>>> ::iterator correctionBytesBlocksIterator = this->correctionBytesBlocks.begin();
+	list<bitset<8>> ::iterator blockIterator;
+	for (int i = 0; i < blockSize; i++) {
+		while (infoBlocksIterator != this->infoBlocks.end()) {
+			blockIterator = (*infoBlocksIterator).begin();
+			for (int j = 0; j < i; j++) blockIterator++;
+			this->mergedBlocks.push_back(*blockIterator);
+			infoBlocksIterator++;
+		}
+		infoBlocksIterator = this->infoBlocks.begin();
+	}
+	while (blocksWithRemainder > 0) {
+		infoBlocksIterator = this->infoBlocks.end()--;
+		for (int j = 0; j < blocksWithRemainder - 1; j++) infoBlocksIterator--;
+		blockIterator = (*infoBlocksIterator).end()--;
+		this->mergedBlocks.push_back(*blockIterator);
+		blocksWithRemainder--;
+	}
+	for (int i = 0; i < blockSize; i++) {
+		while (correctionBytesBlocksIterator != this->correctionBytesBlocks.end())
+		{
+			blockIterator = (*correctionBytesBlocksIterator).begin();
+			for (int j = 0; j < i; j++) blockIterator++;
+			this->mergedBlocks.push_back(*blockIterator);
+			correctionBytesBlocksIterator++;
+		}
 	}
 }

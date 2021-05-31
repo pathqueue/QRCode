@@ -21,7 +21,8 @@ private:
 	const bitset<8> fillingBytes[2] = { bitset<8>(236), bitset<8>(17)}; // заполн€ющийе байты
 	list<bitset<8>> filledBits; // новый список - служебна€ информаци€ + сообщение + заполн€ющие байты
 	list<list<bitset<8>>> infoBlocks; // блоки информации (список в списке)
-	list<list<bitset<8>>> correctionBytesBlock; // блоки байтов коррекции, соответвующие блокам информации
+	list<list<bitset<8>>> correctionBytesBlocks; // блоки байтов коррекции, соответвующие блокам информации
+	list<bitset<8>> mergedBlocks; // объединение блоков
 	const int maxInfoAmount[40] = {
 	128, 224, 352, 512, 688, 864, 992, 1232, 1456, 1728,
 	2032, 2320, 2672, 2920, 3320, 3624, 4056, 4504, 5016, 5352,
@@ -87,6 +88,7 @@ private:
 	void Filling(); // заполнение
 	void Division(); // разделение на блоки
 	void createCorrectionBytes(); // создание блоков коррекции
+	void blockMerging(); // объединение блоков
 public:
 	Bits(string);
 	~Bits();

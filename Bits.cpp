@@ -6,6 +6,8 @@ Bits::Bits(string _string) {
 		this->byteLength++;
 	}
 	this->Filling();
+	this->Division();
+	this->CreateCorrectionBytes();
 }
 
 Bits::~Bits() {
@@ -55,7 +57,6 @@ void Bits::Filling() {
 		for (int i = 7; i > 3; i--) {
 			temp[i - 4] = this->infoAmountVer1to9[i];
 		}
-		cout << temp;
 		this->filledBits.push_back(temp);
 		this->filledByteLength++;
 		for (int i = 7; i > 3; i--) {
@@ -66,13 +67,11 @@ void Bits::Filling() {
 		for (int i = 7; i > 3; i--) {
 			temp[i - 4] = this->infoAmountVer10to40[i];
 		}
-		cout << temp;
 		this->filledBits.push_back(temp);
 		this->filledByteLength++;
 		for (int i = 7; i > -1; i--) {
 			temp[i] = this->infoAmountVer10to40[i - 4];
 		}
-		cout << temp;
 		this->filledBits.push_back(temp);
 		this->filledByteLength++;
 		for (int i = 7; i > 3; i--) {
@@ -85,7 +84,6 @@ void Bits::Filling() {
 		for (int j = 7; j > 3; j--) {
 			temp[j - 4] = tempList[j];
 		}
-		cout << temp;
 		this->filledBits.push_back(temp);
 		this->filledByteLength++;
 		for (int j = 7; j > 3; j--) {
@@ -100,19 +98,16 @@ void Bits::Filling() {
 	for (int i = 3; i >= 0; i--) {
 		temp[i] = 0;
 	}
-	cout << temp << ' ';
 	this->filledBits.push_back(temp);
 	this->filledByteLength++;
 	if (this->filledByteLength < this->maxInfoAmount[this->version - 1] / 8) {
 		int n = this->maxInfoAmount[this->version - 1] / 8 - this->filledByteLength;
 		for (int i = 0; i < n; i++) {
 			if (i % 2 == 0) {
-				cout << this->fillingBytes[0] << ' ';
 				this->filledBits.push_back(this->fillingBytes[0]);
 				this->filledByteLength++;
 			}
 			else {
-				cout << this->fillingBytes[1] << ' ';
 				this->filledBits.push_back(this->fillingBytes[1]);
 				this->filledByteLength++;
 			}
@@ -145,7 +140,7 @@ void Bits::Division()
 	}
 }
 
-void Bits::createCorrectionBytes() // создание байтов коррекции
+void Bits::CreateCorrectionBytes() // создание байтов коррекции
 {
 	int A, B;
 	int correctionBytesCount = this->correctionBytesCount[this->version - 1];
@@ -207,7 +202,7 @@ void Bits::createCorrectionBytes() // создание байтов коррекции
 	}
 }
 
-void Bits::blockMerging()
+void Bits::BlockMerging()
 {
 	int blocksCount = this->blocksCount[this->version - 1];
 	int blockSize = this->byteLength / blocksCount;

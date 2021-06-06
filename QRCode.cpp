@@ -1,11 +1,4 @@
-﻿// QRCode.cpp : Этот файл содержит функцию "main". Здесь начинается и заканчивается выполнение программы.
-//
-
-#include <Magick++.h>
-#include "Bits.h"
-
-using namespace std;
-using namespace Magick;
+﻿#include "Bits.h"
 
 void main(int argc, char** argv) {
 	try {

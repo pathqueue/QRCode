@@ -145,10 +145,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Bits.cpp" />
+    <ClCompile Include="Draw.cpp" />
     <ClCompile Include="QRCode.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bits.h" />
+    <ClInclude Include="Draw.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

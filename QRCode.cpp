@@ -1,4 +1,5 @@
 ﻿#include "Bits.h"
+#include "Draw.h"
 
 void main(int argc, char** argv) {
 	try {
@@ -6,6 +7,8 @@ void main(int argc, char** argv) {
 		setlocale(LC_ALL, "Russian");
 		string _string = "Хабр";
 		Bits* _bits = new Bits(_string);
+		Image image = Draw::BaseElements(_bits);
+		image.write("ebat.png");
 		system("pause");
 	}
 	catch (Exception& error) {

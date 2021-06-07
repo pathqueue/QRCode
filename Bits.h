@@ -35,5 +35,6 @@ private:
 	void BlockMerging(); // объединение блоков
 public:
 	Bits(string);
+	int getVersion();
 	~Bits();
 };

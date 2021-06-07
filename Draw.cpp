@@ -43,7 +43,7 @@ map<int, list<int>> levelingNodes = { // выравнивающие узлы
 		{39, { 6, 26, 54, 82, 110, 138, 166 }},
 		{40, { 6, 30, 58, 86, 114, 142, 170 }} 
 };
-map<int, list<string>> versionCode = {
+map<int, list<int>> versionCode = {
 	{7, { 6, 22, 38 }},
 	{ 8, { 6, 24, 42 } },
 	{ 9, { 6, 26, 46 } },
@@ -79,3 +79,94 @@ map<int, list<string>> versionCode = {
 	{ 39, { 6, 26, 54, 82, 110, 138, 166 } },
 	{ 40, { 6, 30, 58, 86, 114, 142, 170 } }
 };
+
+void Draw::Offset(Image* image)
+{
+	int width = image->size().width();
+	for (int k = 0; k < 4; k++)
+	{
+		for (int i = 0; i < width; i++)
+		{
+			image->pixelColor(i, k, "white");
+			image->pixelColor(i, width - k - 1, "white");
+			if (i > 3 && i < width - 4)
+			{ 
+				image->pixelColor(k, i, "white");
+				image->pixelColor(width - k - 1, i, "white");
+			}
+		}
+	}
+}
+
+void Draw::DrawSearchPattern(Image* image, int x, int y)
+{
+	for (int i = 0; i < 7; i++)
+	{
+		image->pixelColor(x + i, y, "black");
+		image->pixelColor(x + i, y + 6, "black");
+		if (i > 0 && i < 6)
+		{
+			image->pixelColor(x, y + i, "black");
+			image->pixelColor(x + 6, y + i, "black");
+		}
+	}
+	for (int i = 0; i < 3; i++)
+	{
+		for (int j = 0; j < 3; j++)
+		{
+			image->pixelColor(x + i + 2, y + j + 2, "black");
+		}
+	}
+}
+
+void Draw::SearchPatterns(Image* image)
+{
+	DrawSearchPattern(image, 4, 4);
+	DrawSearchPattern(image, 4, image->size().height() - 11);
+	DrawSearchPattern(image, image->size().width() - 11, 4);
+}
+
+void Draw::DrawLevelingPattern(Image* image, int x, int y)
+{
+	image->pixelColor(x, y, "black");
+	for (int i = 0; i < 5; i++)
+	{
+		image->pixelColor(x - 2 + i, y - 2, "black");
+		image->pixelColor(x - 2 + i, y + 2, "black");
+		if (i < 3)
+		{
+			image->pixelColor(x - 2, y - 1 + i, "black");
+			image->pixelColor(x + 2, y - 1 + i, "black");
+		}
+	}
+}
+
+void Draw::LevelingPatterns(Image* image)
+{
+
+}
+
+Image Draw::BaseElements(Bits* bits)
+{
+	int sideSize;
+	int version = bits->getVersion();
+	stringstream ss;
+	string size;
+	if (version == 1)
+	{ 
+		sideSize = 21 + 8;
+	}
+	else 
+	{
+		sideSize = levelingNodes[version].back() + 7 + 8;
+	}
+	ss << sideSize << "x" << sideSize;
+	ss >> size;
+	Geometry size_geom(size);
+	Image image(size_geom, "white");
+	
+	Offset(&image);
+	SearchPatterns(&image);
+	LevelingPatterns(&image);
+	return image;
+}

@@ -74,6 +74,11 @@ Bits::Bits(string _string) {
 	this->BlockMerging();
 }
 
+int Bits::getVersion()
+{
+	return this->version;
+}
+
 Bits::~Bits() {
 
 }

@@ -368,6 +368,7 @@ void Draw::DataAddition(Image* image, Bits* bits, int version, int** matrix, int
 	string byteStr;
 	bool flag = true;
 	string zeros = "00000000";
+	string temp = "11111111";
 	int x, y;
 	int numberOfColumns = (image->size().width() - 9) / 2;
 	int currentNumberOfColumns = numberOfColumns;
@@ -376,6 +377,7 @@ void Draw::DataAddition(Image* image, Bits* bits, int version, int** matrix, int
 	while (currentNumberOfColumns > 0) {
 		if (flag && bitsIterator == bitsMergedBlocks.end()) {
 			byteStr = zeros;
+			temp = zeros;
 			flag = false;
 		}
 		if (flag) byteStr = (*bitsIterator).to_string();

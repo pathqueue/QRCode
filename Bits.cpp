@@ -199,22 +199,29 @@ void Bits::Division()
 	int blockSize = this->filledByteLength / blocksCount;
 	int blocksWithRemainder = this->filledByteLength % blocksCount;
 	list<bitset<8>> temp;
+	cout << endl << endl;
 	for (int i = 0; i < blocksCount - blocksWithRemainder; i++) {
 		for (int j = 0; j < blockSize; j++) {
+			cout << filledBits.front() << ' ';
 			temp.push_back(this->filledBits.front());
 			this->filledBits.pop_front();
 		}
 		this->infoBlocks.push_back(temp);
 		temp.clear();
+		cout << endl << endl;
 	}
+	cout << endl;
 	for (int i = 0; i < blocksWithRemainder; i++) {
 		for (int j = 0; j < blockSize + 1; j++) {
+			cout << filledBits.front() << ' ';
 			temp.push_back(this->filledBits.front());
 			this->filledBits.pop_front();
 		}
 		this->infoBlocks.push_back(temp);
 		temp.clear();
+		cout << endl << endl;
 	}
+	cout << endl << endl;
 }
 
 void Bits::CreateCorrectionBytes()
@@ -234,14 +241,17 @@ void Bits::CreateCorrectionBytes()
 		for (int i = 0; i < blockArraySize; i++) {
 			if (blockIterator == (*infoBlocksIterator).end())
 			{
+				cout << "0 ";
 				blockArray.push_back(0);
 			}
 			else 
 			{
+				cout << (*blockIterator).to_ulong() << " ";
 				blockArray.push_back((*blockIterator).to_ulong());
 				blockIterator++;
 			}
 		}
+		cout << endl << endl;
 		for (int i = 0; i < (*infoBlocksIterator).size(); i++) {
 			A = blockArray.front();
 			blockArray.pop_front();
@@ -260,13 +270,16 @@ void Bits::CreateCorrectionBytes()
 		}
 		blockArrayIterator = blockArray.begin();
 		for (int i = 0; i < numberofCorrectionBytes[this->version - 1]; i++) {
+			cout << bitset<8>(*blockArrayIterator).to_string() << ' ';
 			bitsetTemp.push_back(bitset<8>(*blockArrayIterator));
 			blockArrayIterator++;
 		}
+		cout << endl << endl;
 		this->correctionBytesBlocks.push_back(bitsetTemp);
 		bitsetTemp.clear();
 		infoBlocksIterator++;
 	}
+	cout << endl << endl;
 }
 
 void Bits::BlockMerging()
@@ -282,25 +295,30 @@ void Bits::BlockMerging()
 		while (infoBlocksIterator != this->infoBlocks.end()) {
 			blockIterator = (*infoBlocksIterator).begin();
 			for (int j = 0; j < i; j++) blockIterator++;
+			cout << (*blockIterator).to_string() << ' ';
 			this->mergedBlocks.push_back(*blockIterator);
 			infoBlocksIterator++;
 		}
 		infoBlocksIterator = this->infoBlocks.begin();
 	}
+	cout << endl;
 	while (blocksWithRemainder > 0) {
 		infoBlocksIterator = this->infoBlocks.end()--;
 		infoBlocksIterator--;
 		for (int j = 0; j < blocksWithRemainder - 1; j++) infoBlocksIterator--;
 		blockIterator = (*infoBlocksIterator).end();
 		blockIterator--;
+		cout << (*blockIterator).to_string() << ' ';
 		this->mergedBlocks.push_back(*blockIterator);
 		blocksWithRemainder--;
 	}
+	cout << endl;
 	for (int i = 0; i < correctionBytesSize; i++) {
 		while (correctionBytesBlocksIterator != this->correctionBytesBlocks.end())
 		{
 			blockIterator = (*correctionBytesBlocksIterator).begin();
 			for (int j = 0; j < i; j++) blockIterator++;
+			cout << (*blockIterator).to_string() << ' ';
 			this->mergedBlocks.push_back(*blockIterator);
 			correctionBytesBlocksIterator++;
 		}

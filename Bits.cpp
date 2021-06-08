@@ -79,6 +79,11 @@ int Bits::getVersion()
 	return this->version;
 }
 
+list<bitset<8>> Bits::getMergedBlocks()
+{
+	return this->mergedBlocks;
+}
+
 Bits::~Bits() {
 
 }
@@ -115,6 +120,7 @@ int Bits::ServiseInfo() {
 		if (this->infoAmountVer10to40 == 0) generalLength += this->infoAmountVer1to9.to_string().length();
 		else  generalLength += this->infoAmountVer10to40.to_string().length();
 	}
+	cout << this->version;
 	return generalLength;
 }
 
@@ -129,7 +135,6 @@ void Bits::Filling() {
 		for (int i = 7; i > 3; i--) {
 			temp[i - 4] = this->infoAmountVer1to9[i];
 		}
-		cout << temp << ' ';
 		this->filledBits.push_back(temp);
 		this->filledByteLength++;
 		for (int i = 7; i > 3; i--) {
@@ -140,13 +145,11 @@ void Bits::Filling() {
 		for (int i = 7; i > 3; i--) {
 			temp[i - 4] = this->infoAmountVer10to40[8 + i];
 		}
-		cout << temp << ' ';
 		this->filledBits.push_back(temp);
 		this->filledByteLength++;
 		for (int i = 7; i > -1; i--) {
 			temp[i] = this->infoAmountVer10to40[4 + i];
 		}
-		cout << temp << ' ';
 		this->filledBits.push_back(temp);
 		this->filledByteLength++;
 		for (int i = 7; i > 3; i--) {
@@ -159,7 +162,6 @@ void Bits::Filling() {
 		for (int j = 7; j > 3; j--) {
 			temp[j - 4] = tempList[j];
 		}
-		cout << temp << ' ';
 		this->filledBits.push_back(temp);
 		this->filledByteLength++;
 		for (int j = 7; j > 3; j--) {
@@ -174,19 +176,16 @@ void Bits::Filling() {
 	for (int i = 3; i >= 0; i--) {
 		temp[i] = 0;
 	}
-	cout << temp << ' ';
 	this->filledBits.push_back(temp);
 	this->filledByteLength++;
 	if (this->filledByteLength < maxInfoAmount[this->version - 1] / 8) {
 		int n = maxInfoAmount[this->version - 1] / 8 - this->filledByteLength;
 		for (int i = 0; i < n; i++) {
 			if (i % 2 == 0) {
-				cout << this->fillingBytes[0] << ' ';
 				this->filledBits.push_back(this->fillingBytes[0]);
 				this->filledByteLength++;
 			}
 			else {
-				cout << this->fillingBytes[1] << ' ';
 				this->filledBits.push_back(this->fillingBytes[1]);
 				this->filledByteLength++;
 			}
@@ -196,50 +195,42 @@ void Bits::Filling() {
 
 void Bits::Division()
 {
-	cout << endl << this->version << endl;
 	int blocksCount = numberOfBlocks[this->version - 1];
 	int blockSize = this->filledByteLength / blocksCount;
 	int blocksWithRemainder = this->filledByteLength % blocksCount;
 	list<bitset<8>> temp;
 	for (int i = 0; i < blocksCount - blocksWithRemainder; i++) {
 		for (int j = 0; j < blockSize; j++) {
-			cout << this->filledBits.front() << " ";
 			temp.push_back(this->filledBits.front());
 			this->filledBits.pop_front();
 		}
-		cout << endl;
 		this->infoBlocks.push_back(temp);
 		temp.clear();
 	}
 	for (int i = 0; i < blocksWithRemainder; i++) {
 		for (int j = 0; j < blockSize + 1; j++) {
-			cout << this->filledBits.front() << " ";
 			temp.push_back(this->filledBits.front());
 			this->filledBits.pop_front();
 		}
-		cout << endl;
 		this->infoBlocks.push_back(temp);
 		temp.clear();
 	}
-	cout << endl;
 }
 
 void Bits::CreateCorrectionBytes()
 {
-	int A, B;
+	int A, B, C, D;
 	int correctionBytesCount = numberofCorrectionBytes[this->version - 1];
-	list <int> generatingPolynom = generatingPolynoms[correctionBytesCount];
+	list <int> generatedPolynom = generatingPolynoms[correctionBytesCount];
+	list <int> ::iterator generatedPolynomIterator;
 	list<list<bitset<8>>> ::iterator infoBlocksIterator = this->infoBlocks.begin();
 	list<bitset<8>> ::iterator blockIterator;
-	list<int> temp;
-	list<int> ::iterator tempIterator;
 	list<int> blockArray;
 	list<int> ::iterator blockArrayIterator;
 	list<bitset<8>> bitsetTemp;
 	while (infoBlocksIterator != this->infoBlocks.end()) {
-		temp = generatingPolynom;
 		blockIterator = (*infoBlocksIterator).begin();
-		int blockArraySize = max((*infoBlocksIterator).size(), generatingPolynoms.size());
+		int blockArraySize = max((*infoBlocksIterator).size(), generatedPolynom.size());
 		for (int i = 0; i < blockArraySize; i++) {
 			if (blockIterator == (*infoBlocksIterator).end())
 			{
@@ -257,31 +248,21 @@ void Bits::CreateCorrectionBytes()
 			blockArray.push_back(0);
 			if (A == 0) continue;
 			B = reverseGalois[A];
-			tempIterator = temp.begin();
-			while (tempIterator != temp.end()) {	
-				*tempIterator = (*tempIterator + B) % 255;
-				tempIterator++;
-			}
-			tempIterator = temp.begin();
-			while (tempIterator != temp.end()) {
-				*tempIterator = galois[*tempIterator];
-				tempIterator++;
-			}
-			tempIterator = temp.begin();
+			generatedPolynomIterator = generatedPolynom.begin();
 			blockArrayIterator = blockArray.begin();
-			while (tempIterator != temp.end()) {
-				*tempIterator = *tempIterator ^ *blockArrayIterator;
-				tempIterator++;
+			while (generatedPolynomIterator != generatedPolynom.end()) {
+				C = (*generatedPolynomIterator + B) % 255;
+				D = galois[C];
+				*blockArrayIterator = D ^ *blockArrayIterator;
 				blockArrayIterator++;
+				generatedPolynomIterator++;
 			}
 		}
-		tempIterator = temp.begin();
-		while (tempIterator != temp.end()) {
-			cout << bitset<8>(*tempIterator) << ' ';
-			bitsetTemp.push_back(bitset<8>(*tempIterator));
-			tempIterator++;
+		blockArrayIterator = blockArray.begin();
+		for (int i = 0; i < numberofCorrectionBytes[this->version - 1]; i++) {
+			bitsetTemp.push_back(bitset<8>(*blockArrayIterator));
+			blockArrayIterator++;
 		}
-		cout << endl << endl;
 		this->correctionBytesBlocks.push_back(bitsetTemp);
 		bitsetTemp.clear();
 		infoBlocksIterator++;
@@ -301,7 +282,6 @@ void Bits::BlockMerging()
 		while (infoBlocksIterator != this->infoBlocks.end()) {
 			blockIterator = (*infoBlocksIterator).begin();
 			for (int j = 0; j < i; j++) blockIterator++;
-			cout << *blockIterator << ' ';
 			this->mergedBlocks.push_back(*blockIterator);
 			infoBlocksIterator++;
 		}
@@ -313,17 +293,14 @@ void Bits::BlockMerging()
 		for (int j = 0; j < blocksWithRemainder - 1; j++) infoBlocksIterator--;
 		blockIterator = (*infoBlocksIterator).end();
 		blockIterator--;
-		cout << *blockIterator << ' ';
 		this->mergedBlocks.push_back(*blockIterator);
 		blocksWithRemainder--;
 	}
-	cout << endl;
 	for (int i = 0; i < correctionBytesSize; i++) {
 		while (correctionBytesBlocksIterator != this->correctionBytesBlocks.end())
 		{
 			blockIterator = (*correctionBytesBlocksIterator).begin();
 			for (int j = 0; j < i; j++) blockIterator++;
-			cout << *blockIterator << ' ';
 			this->mergedBlocks.push_back(*blockIterator);
 			correctionBytesBlocksIterator++;
 		}

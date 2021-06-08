@@ -6,7 +6,9 @@
 #include <map>
 #include <vector>
 #include <iterator>
+#include <ctime>
 #include <Magick++.h>
+
 using namespace std;
 using namespace Magick;
 
@@ -24,7 +26,7 @@ private:
 	list<bitset<8>> filledBits; // новый список - служебна€ информаци€ + сообщение + заполн€ющие байты
 	list<list<bitset<8>>> infoBlocks; // блоки информации (список в списке)
 	list<list<bitset<8>>> correctionBytesBlocks; // блоки байтов коррекции, соответвующие блокам информации
-	list<bitset<8>> mergedBlocks; // объединение блоков
+	list<bitset<8>> mergedBlocks; // объединенные блоки
 
 	void SetVersion(); // установить версию
 	void SetInfoAmount(); // установить длину в 8 или 16 битовой записи
@@ -36,5 +38,6 @@ private:
 public:
 	Bits(string);
 	int getVersion();
+	list<bitset<8>> getMergedBlocks();
 	~Bits();
 };

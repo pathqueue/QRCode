@@ -351,7 +351,7 @@ Utils Draw::DrawData(Image* image, bool up, int x, int y, string data, int** mat
 			if (k == data.size() || k == data.size() + 1) {
 				return utils;
 			}
-			else if (matrix[y + j][x] == 1 || matrix[y + j][x] == 2 || matrix[y + j][x] == 5 || matrix[y + j][x] == 6) {
+			else if (matrix[y + j][x] == 1 || matrix[y + j][x] == 2 || matrix[y + j][x] == 6) {
 				utils.done = true;
 				for (int i = k; i < data.size(); i++) utils.remainer += data[i];
 				return utils;

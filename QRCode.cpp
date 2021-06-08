@@ -5,10 +5,10 @@ void main(int argc, char** argv) {
 	try {
 		InitializeMagick(*argv);
 		setlocale(LC_ALL, "Russian");
-		string _string = "Хабрр";
+		string _string = "vk.com/pskovsb";
 		Bits* _bits = new Bits(_string);
 		Image image = Draw::BaseElements(_bits);
-		image.write("ebat.png");
+		image.write("qrCode.png");
 		system("pause");
 	}
 	catch (Exception& error) {

@@ -8,13 +8,15 @@ const int maxInfoAmount[40] = { // массив для определения версии
 }; 
 const int numberOfBlocks[40] = { // количество блоков при разбиении
 	1, 1, 1, 2, 2, 4, 4, 4, 5, 5,
-	5, 8, 9, 9, 10, 10, 11, 13, 14, 16, 17, 17, 18, 20, 21,
-	23, 25, 26, 28, 29, 31, 33, 35, 37, 38, 40, 43, 45, 47, 49 
+	5, 8, 9, 9, 10, 10, 11, 13, 14, 16, 
+	17, 17, 18, 20, 21, 23, 25, 26, 28, 29, 
+	31, 33, 35, 37, 38, 40, 43, 45, 47, 49 
 };
 const int numberofCorrectionBytes[40] = {  // количество блоков коррекции на один блок
-	10, 16, 26, 18, 24, 16, 18,
-	22, 22, 26, 30, 22, 22, 24, 24, 28, 28, 26, 26, 26, 26, 28, 28,
-	28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28 
+	10, 16, 26, 18, 24, 16, 18, 22, 22, 26, 
+	30, 22, 22, 24, 24, 28, 28, 26, 26, 26, 
+	26, 28, 28, 28, 28, 28, 28, 28, 28, 28, 
+	28, 28, 28, 28, 28, 28, 28, 28, 28, 28 
 };
 map<int, list<int>> generatingPolynoms = { // генерируюище многочлены
 	{10, { 251, 67, 46, 61, 118, 70, 64, 94, 32, 45 }},
@@ -65,9 +67,11 @@ const int reverseGalois[256] = { // Обратное поле Галуа
 
 Bits::Bits(string _string) {
 	for (int i = 0; i < _string.length(); i++) {
+		cout << bitset<8>(_string[i]) << ' ';
 		this->stringBits.push_back(bitset<8>(_string[i]));
 		this->byteLength++;
 	}
+	cout << endl << endl;
 	this->Filling();
 	this->Division();
 	this->CreateCorrectionBytes();
@@ -109,18 +113,19 @@ void Bits::SetInfoAmount() {
 
 int Bits::ServiseInfo() {
 	this->SetVersion();
+	cout << this->version << endl << endl;
 	this->SetInfoAmount();
 	int generalLength = 4 + 8 * this->byteLength;
 	if (this->infoAmountVer10to40 == 0) generalLength += this->infoAmountVer1to9.to_string().length();
 	else  generalLength += this->infoAmountVer10to40.to_string().length();
 	if (generalLength > maxInfoAmount[this->version-1]) {
 		this->version++;
+		cout << this->version << endl << endl;
 		this->SetInfoAmount();
 		generalLength = 4 + 8 * this->byteLength;
 		if (this->infoAmountVer10to40 == 0) generalLength += this->infoAmountVer1to9.to_string().length();
 		else  generalLength += this->infoAmountVer10to40.to_string().length();
 	}
-	cout << this->version;
 	return generalLength;
 }
 
@@ -128,6 +133,9 @@ void Bits::Filling() {
 	int generalLength = this->ServiseInfo();
 	int additionalNulls = 8 - (generalLength % 8);
 	bitset<8> temp, tempList;
+	cout << this->codingType << endl;
+	cout << this->infoAmountVer1to9 << endl;
+	cout << this->infoAmountVer10to40 << endl << endl;
 	for (int i = 7; i > 3; i--) {
 		temp[i] = this->codingType[7 - i];
 	}
@@ -135,6 +143,7 @@ void Bits::Filling() {
 		for (int i = 7; i > 3; i--) {
 			temp[i - 4] = this->infoAmountVer1to9[i];
 		}
+		cout << temp << ' ';
 		this->filledBits.push_back(temp);
 		this->filledByteLength++;
 		for (int i = 7; i > 3; i--) {
@@ -145,11 +154,13 @@ void Bits::Filling() {
 		for (int i = 7; i > 3; i--) {
 			temp[i - 4] = this->infoAmountVer10to40[8 + i];
 		}
+		cout << temp << ' ';
 		this->filledBits.push_back(temp);
 		this->filledByteLength++;
 		for (int i = 7; i > -1; i--) {
 			temp[i] = this->infoAmountVer10to40[4 + i];
 		}
+		cout << temp << ' ';
 		this->filledBits.push_back(temp);
 		this->filledByteLength++;
 		for (int i = 7; i > 3; i--) {
@@ -162,6 +173,7 @@ void Bits::Filling() {
 		for (int j = 7; j > 3; j--) {
 			temp[j - 4] = tempList[j];
 		}
+		cout << temp << ' ';
 		this->filledBits.push_back(temp);
 		this->filledByteLength++;
 		for (int j = 7; j > 3; j--) {
@@ -176,21 +188,25 @@ void Bits::Filling() {
 	for (int i = 3; i >= 0; i--) {
 		temp[i] = 0;
 	}
+	cout << temp << ' ';
 	this->filledBits.push_back(temp);
 	this->filledByteLength++;
 	if (this->filledByteLength < maxInfoAmount[this->version - 1] / 8) {
 		int n = maxInfoAmount[this->version - 1] / 8 - this->filledByteLength;
 		for (int i = 0; i < n; i++) {
 			if (i % 2 == 0) {
+				cout << this->fillingBytes[0] << ' ';
 				this->filledBits.push_back(this->fillingBytes[0]);
 				this->filledByteLength++;
 			}
 			else {
+				cout << this->fillingBytes[1] << ' ';
 				this->filledBits.push_back(this->fillingBytes[1]);
 				this->filledByteLength++;
 			}
 		}
 	}
+	cout << endl << endl;
 }
 
 void Bits::Division()
@@ -237,6 +253,7 @@ void Bits::CreateCorrectionBytes()
 	list<bitset<8>> bitsetTemp;
 	while (infoBlocksIterator != this->infoBlocks.end()) {
 		blockIterator = (*infoBlocksIterator).begin();
+		blockArray.clear();
 		int blockArraySize = max((*infoBlocksIterator).size(), generatedPolynom.size());
 		for (int i = 0; i < blockArraySize; i++) {
 			if (blockIterator == (*infoBlocksIterator).end())
@@ -258,16 +275,40 @@ void Bits::CreateCorrectionBytes()
 			blockArray.push_back(0);
 			if (A == 0) continue;
 			B = reverseGalois[A];
+			cout << A << ' ' << B << endl;
+			generatedPolynomIterator = generatedPolynom.begin();
+			while (generatedPolynomIterator != generatedPolynom.end()) {
+				C = (*generatedPolynomIterator + B) % 255;
+				cout << C << ' ';
+				generatedPolynomIterator++;
+			}
+			cout << endl;
+			generatedPolynomIterator = generatedPolynom.begin();
+			while (generatedPolynomIterator != generatedPolynom.end()) {
+				C = (*generatedPolynomIterator + B) % 255;
+				D = galois[C];
+				cout << D << ' ';
+				generatedPolynomIterator++;
+			}
+			cout << endl;
 			generatedPolynomIterator = generatedPolynom.begin();
 			blockArrayIterator = blockArray.begin();
 			while (generatedPolynomIterator != generatedPolynom.end()) {
 				C = (*generatedPolynomIterator + B) % 255;
 				D = galois[C];
 				*blockArrayIterator = D ^ *blockArrayIterator;
+				cout << *blockArrayIterator << ' ';
 				blockArrayIterator++;
 				generatedPolynomIterator++;
 			}
+			cout << endl;
 		}
+		blockArrayIterator = blockArray.begin();
+		for (int i = 0; blockArrayIterator != blockArray.end(); i++) {
+			cout << (*blockArrayIterator) << ' ';
+			blockArrayIterator++;
+		}
+		cout << endl;
 		blockArrayIterator = blockArray.begin();
 		for (int i = 0; i < numberofCorrectionBytes[this->version - 1]; i++) {
 			cout << bitset<8>(*blockArrayIterator).to_string() << ' ';

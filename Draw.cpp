@@ -360,14 +360,14 @@ Utils Draw::DrawData(Image* image, bool up, int x, int y, string data, int** mat
 	}
 }
 
-void Draw::DataAddition(Image* image, Bits* bits, int version, int** matrix, int sideSize)
+void Draw::DataAddition(Image* image, Bits* bits, int version, int** matrix)
 {
 	Utils utils;
 	utils.done = false;
 	utils.remainer = "";
 	string byteStr;
 	bool flag = true;
-	string zeros = "00000000";
+	string unused = "00000000";
 	string temp = "11111111";
 	int x, y;
 	int numberOfColumns = (image->size().width() - 9) / 2;
@@ -376,8 +376,8 @@ void Draw::DataAddition(Image* image, Bits* bits, int version, int** matrix, int
 	list<bitset<8>> ::iterator bitsIterator = bitsMergedBlocks.begin();
 	while (currentNumberOfColumns > 0) {
 		if (flag && bitsIterator == bitsMergedBlocks.end()) {
-			byteStr = zeros;
-			temp = zeros;
+			byteStr = unused;
+			temp = unused;
 			flag = false;
 		}
 		if (flag) byteStr = (*bitsIterator).to_string();
@@ -420,7 +420,6 @@ void Draw::DataAddition(Image* image, Bits* bits, int version, int** matrix, int
 			if (utils.done) currentNumberOfColumns--;
 		}
 		bitsIterator++;
-		ShowMatrix(matrix, sideSize);
 	}
 }
 
@@ -451,7 +450,7 @@ void Draw::ShowMatrix(int** matrix, int sideSize)
 	cout << count << endl;
 }
 
-Image Draw::BaseElements(Bits* bits)
+Image Draw::DrawQRCode(Bits* bits)
 {
 	int sideSize;
 	int version = bits->getVersion();
@@ -475,6 +474,6 @@ Image Draw::BaseElements(Bits* bits)
 	SyncStrips(&image, matrix);
 	VersionCode(&image, version, matrix);
 	MaskAndCorrectionLevelCode(&image, matrix);	
-	DataAddition(&image, bits, version, matrix, sideSize);
+	DataAddition(&image, bits, version, matrix);
 	return image;
 }

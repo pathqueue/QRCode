@@ -7,8 +7,8 @@ void main(int argc, char** argv) {
 		setlocale(LC_ALL, "Russian");
 		string _string = "vk.com/pskovsb";
 		Bits* _bits = new Bits(_string);
-		Image image = Draw::BaseElements(_bits);
-		image.write("qrCode.png");
+		Image image = Draw::DrawQRCode(_bits);
+		image.write("QRCode.png");
 		system("pause");
 	}
 	catch (Exception& error) {

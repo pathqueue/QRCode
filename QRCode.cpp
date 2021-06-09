@@ -9,7 +9,6 @@ void main(int argc, char** argv) {
 		Bits* _bits = new Bits(_string);
 		Image image = Draw::DrawQRCode(_bits);
 		image.write("QRCode.png");
-		system("pause");
 	}
 	catch (Exception& error) {
 		cerr << "Caught Magick++ exception: " << error.what() << endl;

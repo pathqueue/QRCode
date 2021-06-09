@@ -469,7 +469,7 @@ G:\Pasha\Программирование\Проект\QRCode\Draw.h(1,1): warni
 G:\Pasha\Программирование\Проект\QRCode\Draw.h(1,1): warning C4828: Файл содержит знак, начинающийся со смещения 0x6a4, который является недопустимым в текущей исходной кодировке (кодовая страница 65001).
 G:\Pasha\Программирование\Проект\QRCode\QRCode.cpp(4,34): warning C4326: возвращаемый тип "main" должен быть "int", а не "void"
   Создание кода
-  0 of 839 functions ( 0.0%) were compiled, the rest were copied from previous compilation.
+  1 of 831 functions ( 0.1%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
     0 functions had inline decision re-evaluated but remain unchanged
   Создание кода завершено

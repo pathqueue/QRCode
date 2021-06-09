@@ -67,11 +67,9 @@ const int reverseGalois[256] = { // Обратное поле Галуа
 
 Bits::Bits(string _string) {
 	for (int i = 0; i < _string.length(); i++) {
-		cout << bitset<8>(_string[i]) << ' ';
 		this->stringBits.push_back(bitset<8>(_string[i]));
 		this->byteLength++;
 	}
-	cout << endl << endl;
 	this->Filling();
 	this->Division();
 	this->CreateCorrectionBytes();
@@ -113,14 +111,12 @@ void Bits::SetInfoAmount() {
 
 int Bits::ServiseInfo() {
 	this->SetVersion();
-	cout << this->version << endl << endl;
 	this->SetInfoAmount();
 	int generalLength = 4 + 8 * this->byteLength;
 	if (this->infoAmountVer10to40 == 0) generalLength += this->infoAmountVer1to9.to_string().length();
 	else  generalLength += this->infoAmountVer10to40.to_string().length();
 	if (generalLength > maxInfoAmount[this->version-1]) {
 		this->version++;
-		cout << this->version << endl << endl;
 		this->SetInfoAmount();
 		generalLength = 4 + 8 * this->byteLength;
 		if (this->infoAmountVer10to40 == 0) generalLength += this->infoAmountVer1to9.to_string().length();
@@ -133,9 +129,6 @@ void Bits::Filling() {
 	int generalLength = this->ServiseInfo();
 	int additionalNulls = 8 - (generalLength % 8);
 	bitset<8> temp, tempList;
-	cout << this->codingType << endl;
-	cout << this->infoAmountVer1to9 << endl;
-	cout << this->infoAmountVer10to40 << endl << endl;
 	for (int i = 7; i > 3; i--) {
 		temp[i] = this->codingType[7 - i];
 	}
@@ -143,7 +136,6 @@ void Bits::Filling() {
 		for (int i = 7; i > 3; i--) {
 			temp[i - 4] = this->infoAmountVer1to9[i];
 		}
-		cout << temp << ' ';
 		this->filledBits.push_back(temp);
 		this->filledByteLength++;
 		for (int i = 7; i > 3; i--) {
@@ -154,13 +146,11 @@ void Bits::Filling() {
 		for (int i = 7; i > 3; i--) {
 			temp[i - 4] = this->infoAmountVer10to40[8 + i];
 		}
-		cout << temp << ' ';
 		this->filledBits.push_back(temp);
 		this->filledByteLength++;
 		for (int i = 7; i > -1; i--) {
 			temp[i] = this->infoAmountVer10to40[4 + i];
 		}
-		cout << temp << ' ';
 		this->filledBits.push_back(temp);
 		this->filledByteLength++;
 		for (int i = 7; i > 3; i--) {
@@ -173,7 +163,6 @@ void Bits::Filling() {
 		for (int j = 7; j > 3; j--) {
 			temp[j - 4] = tempList[j];
 		}
-		cout << temp << ' ';
 		this->filledBits.push_back(temp);
 		this->filledByteLength++;
 		for (int j = 7; j > 3; j--) {
@@ -188,25 +177,21 @@ void Bits::Filling() {
 	for (int i = 3; i >= 0; i--) {
 		temp[i] = 0;
 	}
-	cout << temp << ' ';
 	this->filledBits.push_back(temp);
 	this->filledByteLength++;
 	if (this->filledByteLength < maxInfoAmount[this->version - 1] / 8) {
 		int n = maxInfoAmount[this->version - 1] / 8 - this->filledByteLength;
 		for (int i = 0; i < n; i++) {
 			if (i % 2 == 0) {
-				cout << this->fillingBytes[0] << ' ';
 				this->filledBits.push_back(this->fillingBytes[0]);
 				this->filledByteLength++;
 			}
 			else {
-				cout << this->fillingBytes[1] << ' ';
 				this->filledBits.push_back(this->fillingBytes[1]);
 				this->filledByteLength++;
 			}
 		}
 	}
-	cout << endl << endl;
 }
 
 void Bits::Division()
@@ -215,29 +200,22 @@ void Bits::Division()
 	int blockSize = this->filledByteLength / blocksCount;
 	int blocksWithRemainder = this->filledByteLength % blocksCount;
 	list<bitset<8>> temp;
-	cout << endl << endl;
 	for (int i = 0; i < blocksCount - blocksWithRemainder; i++) {
 		for (int j = 0; j < blockSize; j++) {
-			cout << filledBits.front() << ' ';
 			temp.push_back(this->filledBits.front());
 			this->filledBits.pop_front();
 		}
 		this->infoBlocks.push_back(temp);
 		temp.clear();
-		cout << endl << endl;
 	}
-	cout << endl;
 	for (int i = 0; i < blocksWithRemainder; i++) {
 		for (int j = 0; j < blockSize + 1; j++) {
-			cout << filledBits.front() << ' ';
 			temp.push_back(this->filledBits.front());
 			this->filledBits.pop_front();
 		}
 		this->infoBlocks.push_back(temp);
 		temp.clear();
-		cout << endl << endl;
 	}
-	cout << endl << endl;
 }
 
 void Bits::CreateCorrectionBytes()
@@ -258,69 +236,39 @@ void Bits::CreateCorrectionBytes()
 		for (int i = 0; i < blockArraySize; i++) {
 			if (blockIterator == (*infoBlocksIterator).end())
 			{
-				cout << "0 ";
 				blockArray.push_back(0);
 			}
 			else 
 			{
-				cout << (*blockIterator).to_ulong() << " ";
 				blockArray.push_back((*blockIterator).to_ulong());
 				blockIterator++;
 			}
 		}
-		cout << endl << endl;
 		for (int i = 0; i < (*infoBlocksIterator).size(); i++) {
 			A = blockArray.front();
 			blockArray.pop_front();
 			blockArray.push_back(0);
 			if (A == 0) continue;
 			B = reverseGalois[A];
-			cout << A << ' ' << B << endl;
-			generatedPolynomIterator = generatedPolynom.begin();
-			while (generatedPolynomIterator != generatedPolynom.end()) {
-				C = (*generatedPolynomIterator + B) % 255;
-				cout << C << ' ';
-				generatedPolynomIterator++;
-			}
-			cout << endl;
-			generatedPolynomIterator = generatedPolynom.begin();
-			while (generatedPolynomIterator != generatedPolynom.end()) {
-				C = (*generatedPolynomIterator + B) % 255;
-				D = galois[C];
-				cout << D << ' ';
-				generatedPolynomIterator++;
-			}
-			cout << endl;
 			generatedPolynomIterator = generatedPolynom.begin();
 			blockArrayIterator = blockArray.begin();
 			while (generatedPolynomIterator != generatedPolynom.end()) {
 				C = (*generatedPolynomIterator + B) % 255;
 				D = galois[C];
 				*blockArrayIterator = D ^ *blockArrayIterator;
-				cout << *blockArrayIterator << ' ';
 				blockArrayIterator++;
 				generatedPolynomIterator++;
 			}
-			cout << endl;
 		}
-		blockArrayIterator = blockArray.begin();
-		for (int i = 0; blockArrayIterator != blockArray.end(); i++) {
-			cout << (*blockArrayIterator) << ' ';
-			blockArrayIterator++;
-		}
-		cout << endl;
 		blockArrayIterator = blockArray.begin();
 		for (int i = 0; i < numberofCorrectionBytes[this->version - 1]; i++) {
-			cout << bitset<8>(*blockArrayIterator).to_string() << ' ';
 			bitsetTemp.push_back(bitset<8>(*blockArrayIterator));
 			blockArrayIterator++;
 		}
-		cout << endl << endl;
 		this->correctionBytesBlocks.push_back(bitsetTemp);
 		bitsetTemp.clear();
 		infoBlocksIterator++;
 	}
-	cout << endl << endl;
 }
 
 void Bits::BlockMerging()
@@ -336,30 +284,25 @@ void Bits::BlockMerging()
 		while (infoBlocksIterator != this->infoBlocks.end()) {
 			blockIterator = (*infoBlocksIterator).begin();
 			for (int j = 0; j < i; j++) blockIterator++;
-			cout << (*blockIterator).to_string() << ' ';
 			this->mergedBlocks.push_back(*blockIterator);
 			infoBlocksIterator++;
 		}
 		infoBlocksIterator = this->infoBlocks.begin();
 	}
-	cout << endl;
 	while (blocksWithRemainder > 0) {
 		infoBlocksIterator = this->infoBlocks.end()--;
 		infoBlocksIterator--;
 		for (int j = 0; j < blocksWithRemainder - 1; j++) infoBlocksIterator--;
 		blockIterator = (*infoBlocksIterator).end();
 		blockIterator--;
-		cout << (*blockIterator).to_string() << ' ';
 		this->mergedBlocks.push_back(*blockIterator);
 		blocksWithRemainder--;
 	}
-	cout << endl;
 	for (int i = 0; i < correctionBytesSize; i++) {
 		while (correctionBytesBlocksIterator != this->correctionBytesBlocks.end())
 		{
 			blockIterator = (*correctionBytesBlocksIterator).begin();
 			for (int j = 0; j < i; j++) blockIterator++;
-			cout << (*blockIterator).to_string() << ' ';
 			this->mergedBlocks.push_back(*blockIterator);
 			correctionBytesBlocksIterator++;
 		}
